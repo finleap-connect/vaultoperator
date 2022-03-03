@@ -1,0 +1,32 @@
+---
+{{- if .Values.useOldCertManager }}
+apiVersion: cert-manager.io/v1alpha2
+{{- else }}
+apiVersion: cert-manager.io/v1
+{{- end }}
+kind: Issuer
+metadata:
+  name: selfsigned-issuer
+  labels:
+    {{- include "vault-operator.labels" . | nindent 4 }}
+spec:
+  selfSigned: {}
+---
+{{- if .Values.useOldCertManager }}
+apiVersion: cert-manager.io/v1alpha2
+{{- else }}
+apiVersion: cert-manager.io/v1
+{{- end }}
+kind: Certificate
+metadata:
+  name: vault-operator-cert
+  labels:
+    {{- include "vault-operator.labels" . | nindent 4 }}
+spec:
+  dnsNames:
+  - vault-operator-webhook-service.{{ .Release.Namespace }}.svc
+  - vault-operator-webhook-service.{{ .Release.Namespace }}.svc.cluster.local
+  issuerRef:
+    kind: Issuer
+    name: selfsigned-issuer
+  secretName: vault-operator-cert

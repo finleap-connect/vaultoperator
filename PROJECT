@@ -1,0 +1,7 @@
+domain: github.com/finleap-connect/vaultoperator
+repo: https://github.com/finleap-connect/vaultoperator
+resources:
+- group: vault
+  kind: VaultSecret
+  version: v1alpha1
+version: "2"

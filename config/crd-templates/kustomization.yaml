@@ -1,0 +1,9 @@
+namespace: "{{ .Release.Namespace }}"
+namePrefix: "vault-operator-"
+# namePrefix: "{{ .Release.Name }}-vault-operator-"
+
+bases:
+- ../crd
+
+patchesStrategicMerge:
+- patches/crd_patch.yaml

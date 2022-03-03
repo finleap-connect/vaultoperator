@@ -1,0 +1,45 @@
+# Default values for vault-operator.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: ghcr.io/finleap-connect/vaultoperator
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+terminationGracePeriodSeconds: 10
+
+# Set this to false for GKE, which runs a CertManager, which only
+# supports the cert-manager.io/v1 API
+useOldCertManager: true
+
+# Configure Vault connection
+vault:
+  addr: "" # Address of the Vault instance
+  tls:
+    secretName: "" # Specify secret containing CA to access Vault
+  namespace: "" # Which Vault namespace to connect to
+
+# Set which paths in Vault are allowed to be accessed from any namespace
+sharedPaths:
+  - shared
