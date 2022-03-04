@@ -17,6 +17,7 @@ package controllers
 import (
 	"context"
 	"fmt"
+	"time"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -165,7 +166,14 @@ func mustNotReconcile(vs *vaultv1alpha1.VaultSecret, expected interface{}) ctrl.
 }
 
 var _ = Describe("VaultSecretReconciler", func() {
+	// Define utility constants for object names and testing timeouts/durations and intervals.
+	const (
+		timeout  = time.Second * 10
+		interval = time.Millisecond * 250
+	)
+
 	ctx := context.Background()
+
 	It("can create VaultSecrets", func() {
 		Context("with missing data", func() {
 			Expect(k8sClient.Create(ctx, &vaultv1alpha1.VaultSecret{})).ToNot(Succeed())
@@ -207,7 +215,9 @@ var _ = Describe("VaultSecretReconciler", func() {
 			mustReconcile(vs)
 
 			after := &vaultv1alpha1.VaultSecret{}
-			Expect(k8sClient.Get(ctx, namespacedName(vs), after)).To(Succeed())
+			Eventually(func() bool {
+				return k8sClient.Get(ctx, namespacedName(vs), after) != nil
+			}, timeout, interval).Should(BeTrue())
 			Expect(after.ObjectMeta.Finalizers).To(ContainElement(finalizerName))
 		})
 		Context("deleted on cleanup", func() {
@@ -218,7 +228,9 @@ var _ = Describe("VaultSecretReconciler", func() {
 			Expect(k8sClient.Get(ctx, namespacedName(vs), s)).To(Succeed())
 
 			before := &vaultv1alpha1.VaultSecret{}
-			Expect(k8sClient.Get(ctx, namespacedName(vs), before)).To(Succeed())
+			Eventually(func() bool {
+				return k8sClient.Get(ctx, namespacedName(vs), before) != nil
+			}, timeout, interval).Should(BeTrue())
 			Expect(before.ObjectMeta.Finalizers).To(ContainElement(finalizerName))
 
 			Expect(k8sClient.Delete(ctx, before)).To(Succeed())
@@ -226,26 +238,39 @@ var _ = Describe("VaultSecretReconciler", func() {
 			mustReconcile(vs)
 
 			after := &vaultv1alpha1.VaultSecret{}
-			Expect(k8sClient.Get(ctx, namespacedName(vs), after)).ToNot(Succeed())
-			Expect(k8sClient.Get(ctx, namespacedName(vs), s)).ToNot(Succeed())
+			Eventually(func() bool {
+				return k8sClient.Get(ctx, namespacedName(vs), after) != nil
+			}, timeout, interval).Should(BeTrue())
+
+			Eventually(func() bool {
+				return k8sClient.Get(ctx, namespacedName(vs), s) != nil
+			}, timeout, interval).Should(BeTrue())
 		})
 		Context("handle if secret is gone already", func() {
 			vs := mustCreateNewVaultSecret()
 			mustReconcile(vs)
 
 			secret := &corev1.Secret{}
-			Expect(k8sClient.Get(ctx, namespacedName(vs), secret)).To(Succeed())
+			Eventually(func() bool {
+				return k8sClient.Get(ctx, namespacedName(vs), secret) != nil
+			}, timeout, interval).Should(BeTrue())
 
 			vaultSecret := &vaultv1alpha1.VaultSecret{}
-			Expect(k8sClient.Get(ctx, namespacedName(vs), vaultSecret)).To(Succeed())
+			Eventually(func() bool {
+				return k8sClient.Get(ctx, namespacedName(vs), vaultSecret) != nil
+			}, timeout, interval).Should(BeTrue())
 			Expect(vaultSecret.ObjectMeta.Finalizers).To(ContainElement(finalizerName))
 
 			Expect(k8sClient.Delete(ctx, secret)).To(Succeed())
-			Expect(k8sClient.Get(ctx, namespacedName(vs), secret)).ToNot(Succeed())
+			Eventually(func() bool {
+				return k8sClient.Get(ctx, namespacedName(vs), secret) != nil
+			}, timeout, interval).Should(BeTrue())
 
 			Expect(k8sClient.Delete(ctx, vaultSecret)).To(Succeed())
 			mustReconcile(vs)
-			Expect(k8sClient.Get(ctx, namespacedName(vs), vaultSecret)).ToNot(Succeed())
+			Eventually(func() bool {
+				return k8sClient.Get(ctx, namespacedName(vs), vaultSecret) != nil
+			}, timeout, interval).Should(BeTrue())
 		})
 	})
 	It("can handle related secrets", func() {

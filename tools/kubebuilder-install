@@ -12,7 +12,7 @@ trap cleanup EXIT
 curl -L -o $tmp_dir/kubebuilder https://go.kubebuilder.io/dl/latest/$(go env GOOS)/$(go env GOARCH)
 chmod +x $tmp_dir/kubebuilder && mv $tmp_dir/kubebuilder ${wd}
 
-export K8S_VERSION=1.21.2
+export K8S_VERSION=1.19.2
 curl -sSLo $tmp_dir/envtest-bins.tar.gz "https://go.kubebuilder.io/test-tools/${K8S_VERSION}/$(go env GOOS)/$(go env GOARCH)"
 tar -C ${tmp_dir} --strip-components=1 -zvxf $tmp_dir/envtest-bins.tar.gz
 mv $tmp_dir/bin/* ${wd}/.
