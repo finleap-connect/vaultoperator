@@ -105,6 +105,7 @@ $(TOOLS_DIR)/golangci-lint:
 
 $(TOOLS_DIR)/kubebuilder $(TOOLS_DIR)/kubectl $(TOOLS_DIR)/kube-apiserver $(TOOLS_DIR)/etcd:
 	@$(TOOLS_DIR)/kubebuilder-install
+	@$(TOOLS_DIR)/setup-envtest use
 
 $(TOOLS_DIR)/vault:
 	@$(TOOLS_DIR)/vault-install

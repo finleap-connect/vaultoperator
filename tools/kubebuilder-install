@@ -2,7 +2,14 @@
 set -euo pipefail
 
 wd=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+tmp_dir=$(mktemp -d)
+function cleanup {
+    rm -rf $tmp_dir
+}
+trap cleanup EXIT
 
 # download kubebuilder and install locally.
-curl -L -o kubebuilder https://go.kubebuilder.io/dl/latest/$(go env GOOS)/$(go env GOARCH)
-chmod +x kubebuilder && mv kubebuilder ${wd}
+curl -L -o $tmp_dir/kubebuilder https://go.kubebuilder.io/dl/latest/$(go env GOOS)/$(go env GOARCH)
+chmod +x $tmp_dir/kubebuilder && mv $tmp_dir/kubebuilder ${wd}
+
+GOBIN=${wd} go install sigs.k8s.io/controller-runtime/tools/setup-envtest@latest

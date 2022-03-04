@@ -18,6 +18,7 @@ package controllers
 import (
 	"context"
 	"fmt"
+	"os"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -76,6 +77,8 @@ var _ = BeforeSuite(func(done Done) {
 		First, the envtest cluster is configured to read CRDs from the CRD directory Kubebuilder scaffolds for you.
 	*/
 	By("bootstrapping test environment")
+	Expect(os.Setenv("KUBEBUILDER_ASSETS", "../tools")).To(Succeed())
+
 	testEnv = &envtest.Environment{
 		CRDDirectoryPaths:     []string{filepath.Join("..", "config", "crd", "bases")},
 		ErrorIfCRDPathMissing: true,
