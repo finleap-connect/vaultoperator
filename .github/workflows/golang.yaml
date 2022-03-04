@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: Golang CI
+name: Go
 
 on:
   push:
@@ -22,8 +22,9 @@ on:
   
 env:
   GO_MODULE: github.com/finleap-connect/vaultoperator
-  GO_VERSION: 1.17.x
+  GO_VERSION: 1.17
   GINKGO_VERSION: v1.16.4
+  GOLINT_VERSION: v1.39
 
 jobs:
   lint:
@@ -38,7 +39,7 @@ jobs:
       - name: Run linters
         uses: golangci/golangci-lint-action@v3
         with:
-          version: v1.39
+          version: ${{ env.GOLINT_VERSION }}
           args: --timeout=5m
 
   test:
