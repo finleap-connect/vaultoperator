@@ -1,12 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-wd=$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)
-tmp_dir=$(mktemp -d)
-version="2.3.1"
-function cleanup {
-    rm -rf $tmp_dir
-}
-trap cleanup EXIT
-curl -L https://github.com/kubernetes-sigs/kubebuilder/releases/download/v${version}/kubebuilder_${version}_$(go env GOOS)_$(go env GOARCH).tar.gz | tar -xz -C ${tmp_dir}
-find ${tmp_dir}/kubebuilder_2.3.1_$(go env GOOS)_$(go env GOARCH) -type f -print0 | xargs -0 mv -t ${wd}
+wd=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+
+# download kubebuilder and install locally.
+curl -L -o kubebuilder https://go.kubebuilder.io/dl/latest/$(go env GOOS)/$(go env GOARCH)
+chmod +x kubebuilder && mv kubebuilder ${wd}

@@ -18,7 +18,6 @@ kind: ValidatingWebhookConfiguration
 metadata:
   annotations:
     cert-manager.io/inject-ca-from: '{{ .Release.Namespace }}/vault-operator-cert'
-  creationTimestamp: null
   name: vault-operator-validating-webhook-configuration
 webhooks:
 - clientConfig:

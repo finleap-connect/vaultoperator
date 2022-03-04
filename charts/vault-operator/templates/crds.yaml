@@ -7,7 +7,6 @@ metadata:
     cert-manager.io/inject-ca-from: '{{ .Release.Namespace }}/vault-operator-cert'
     controller-gen.kubebuilder.io/version: v0.2.5
     helm.sh/resource-policy: keep
-  creationTimestamp: null
   name: vaultsecrets.vault.finleap.cloud
 spec:
   conversion:
