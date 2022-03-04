@@ -61,8 +61,7 @@ type VaultSecretReconciler struct {
 // +kubebuilder:rbac:groups=vault.finleap.cloud,resources=vaultsecrets/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups="",resources=secrets,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups="",resources=events,verbs=create;patch
-func (r *VaultSecretReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
-	ctx := context.Background()
+func (r *VaultSecretReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	log := r.Log.WithValues("vaultsecret", req.NamespacedName)
 	log.Info("reconciling...")
 
@@ -86,7 +85,7 @@ func (r *VaultSecretReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error)
 		return ctrl.Result{}, err
 	}
 
-	// Use same request if not overriden
+	// Use same request if not overridden
 	secretReq := req.NamespacedName
 	if vaultSecret.Spec.SecretName != "" {
 		secretReq = types.NamespacedName{
