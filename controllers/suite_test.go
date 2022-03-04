@@ -71,10 +71,7 @@ func TestAPIs(t *testing.T) {
 }
 
 var _ = BeforeSuite(func() {
-	done := make(chan interface{})
-	defer close(done)
-
-	logf.SetLogger(zap.New(zap.UseDevMode(true), zap.WriteTo(GinkgoWriter)))
+	logf.SetLogger(zap.New(zap.WriteTo(GinkgoWriter), zap.UseDevMode(true)))
 
 	ctx, cancel = context.WithCancel(context.TODO())
 
@@ -150,43 +147,37 @@ var _ = BeforeSuite(func() {
 	Expect(err).ToNot(HaveOccurred())
 
 	err = (&VaultSecretReconciler{
-		Client:   k8sClient,
+		Client:   k8sManager.GetClient(),
+		Scheme:   k8sManager.GetScheme(),
 		Log:      logf.Log.WithName("controllers").WithName("VaultSecret"),
 		Recorder: &record.FakeRecorder{}, // dummy recorder
 		Vault:    testVaultClient,
-		Scheme:   scheme.Scheme,
 	}).SetupWithManager(k8sManager)
 	Expect(err).ToNot(HaveOccurred())
 
 	go func() {
 		defer GinkgoRecover()
-		defer close(done)
-
 		err = k8sManager.Start(ctx)
 		Expect(err).ToNot(HaveOccurred(), "failed to run manager")
 	}()
-
-	Eventually(done, 60).Should(BeClosed())
 })
 
 var _ = AfterSuite(func() {
+	cancel()
+
 	By("tearing down the test environment")
-	if testEnv != nil {
-		err := testEnv.Stop()
-		Expect(err).ToNot(HaveOccurred())
-	}
-	if testVaultServer != nil {
-		err := testVaultServer.Stop()
-		Expect(err).ToNot(HaveOccurred())
-	}
-	if testVaultClient != nil {
-		testVaultClient.Close()
-	}
+	err := testEnv.Stop()
+	Expect(err).ToNot(HaveOccurred())
+
+	err = testVaultServer.Stop()
+	Expect(err).ToNot(HaveOccurred())
+
+	testVaultClient.Close()
 })
 
 // Helper functions
-
 func newTestName() string {
+	cancel()
 	testNameCounter += 1
 	return fmt.Sprintf("test%d", testNameCounter)
 }
