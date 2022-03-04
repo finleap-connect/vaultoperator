@@ -72,6 +72,8 @@ func TestAPIs(t *testing.T) {
 
 var _ = BeforeSuite(func() {
 	done := make(chan interface{})
+	defer close(done)
+
 	logf.SetLogger(zap.New(zap.UseDevMode(true), zap.WriteTo(GinkgoWriter)))
 
 	ctx, cancel = context.WithCancel(context.TODO())
