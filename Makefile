@@ -4,6 +4,8 @@ TOOLS_DIR  ?= $(shell cd tools 2>/dev/null && pwd)
 
 # Prerequisite tools
 GO ?= go
+GOOS ?= $(go env GOOS)
+GOARCH ?= $(go env GOARCH)
 DOCKER ?= docker
 KUBECTL ?= kubectl
 HELM ?= helm
@@ -105,7 +107,6 @@ $(TOOLS_DIR)/golangci-lint:
 
 $(TOOLS_DIR)/kubebuilder $(TOOLS_DIR)/kubectl $(TOOLS_DIR)/kube-apiserver $(TOOLS_DIR)/etcd:
 	@$(TOOLS_DIR)/kubebuilder-install
-	@$(TOOLS_DIR)/setup-envtest use --use-env
 
 $(TOOLS_DIR)/vault:
 	@$(TOOLS_DIR)/vault-install
