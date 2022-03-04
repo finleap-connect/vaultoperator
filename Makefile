@@ -1,6 +1,6 @@
 # Directory, where all required tools are located (absolute path required)
 BUILD_PATH ?= $(shell pwd)
-TOOLS_DIR   ?= $(shell cd tools 2>/dev/null && pwd)
+TOOLS_DIR  ?= $(shell cd tools 2>/dev/null && pwd)
 
 # Prerequisite tools
 GO ?= go
@@ -41,7 +41,7 @@ $(MANAGER_BIN): generate fmt vet
 
 lint: $(LINTER) helm-lint go-lint
 
-test: generate fmt vet manifests $(GINKGO) $(KUBEBUILDER) $(VAULT)
+test: $(GINKGO) $(KUBEBUILDER) $(VAULT) generate fmt vet manifests 
 	@$(GINKGO) -r -v -cover --failFast -requireSuite -covermode count -outputdir=$(BUILD_PATH) -coverprofile=.coverprofile 
 
 coverage: ## print coverage from coverprofiles
