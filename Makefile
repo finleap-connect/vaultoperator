@@ -71,13 +71,13 @@ manifests: $(CONTROLLER_GEN) $(KUSTOMIZE)
 generate: $(CONTROLLER_GEN)
 	$(CONTROLLER_GEN) object:headerFile="hack/boilerplate.go.txt" paths="./..."
 
-helm-install: $(HELM)
+helm-install:
 	$(HELM) upgrade --install $(HELM_RELEASE_NAME) --namespace $(HELM_NAMESPACE) $(HELM_CHART_DIR)
 
-helm-uninstall: $(HELM)
+helm-uninstall: 
 	$(HELM) uninstall --namespace $(HELM_NAMESPACE) $(HELM_RELEASE_NAME)
 
-helm-lint: $(HELM)
+helm-lint:
 	$(HELM) lint $(HELM_CHART_DIR)
 
 # Phony target to install all required tools into ${TOOLS_DIR}
