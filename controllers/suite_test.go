@@ -17,6 +17,7 @@ package controllers
 import (
 	"context"
 	"fmt"
+	"os"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -28,7 +29,6 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/tools/record"
-	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/envtest"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
@@ -77,7 +77,7 @@ var _ = BeforeSuite(func() {
 		First, the envtest cluster is configured to read CRDs from the CRD directory Kubebuilder scaffolds for you.
 	*/
 	By("bootstrapping test environment")
-	// Expect(os.Setenv("KUBEBUILDER_ASSETS", "../tools")).To(Succeed())
+	Expect(os.Setenv("SHARED_PATHS", "shared,common")).To(Succeed())
 
 	testEnv = &envtest.Environment{
 		CRDDirectoryPaths:     []string{filepath.Join("..", "config", "crd", "bases")},
@@ -139,27 +139,27 @@ var _ = BeforeSuite(func() {
 	})
 	Expect(err).ToNot(HaveOccurred())
 
-	k8sManager, err := ctrl.NewManager(cfg, ctrl.Options{
-		Scheme: scheme.Scheme,
-	})
-	Expect(err).ToNot(HaveOccurred())
+	// k8sManager, err := ctrl.NewManager(cfg, ctrl.Options{
+	// 	Scheme: scheme.Scheme,
+	// })
+	// Expect(err).ToNot(HaveOccurred())
 
 	testVSR = &VaultSecretReconciler{
-		Client:   k8sManager.GetClient(),
-		Scheme:   k8sManager.GetScheme(),
+		Client:   k8sClient,
+		Scheme:   scheme.Scheme,
 		Log:      logf.Log.WithName("controllers").WithName("VaultSecret"),
 		Recorder: &record.FakeRecorder{}, // dummy recorder
 		Vault:    testVaultClient,
 	}
 
-	err = (testVSR).SetupWithManager(k8sManager)
-	Expect(err).ToNot(HaveOccurred())
+	// err = (testVSR).SetupWithManager(k8sManager)
+	// Expect(err).ToNot(HaveOccurred())
 
-	go func() {
-		defer GinkgoRecover()
-		err = k8sManager.Start(ctx)
-		Expect(err).ToNot(HaveOccurred(), "failed to run manager")
-	}()
+	// go func() {
+	// 	defer GinkgoRecover()
+	// 	err = k8sManager.Start(ctx)
+	// 	Expect(err).ToNot(HaveOccurred(), "failed to run manager")
+	// }()
 })
 
 var _ = AfterSuite(func() {

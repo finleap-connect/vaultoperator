@@ -209,14 +209,16 @@ var _ = Describe("VaultSecretReconciler", func() {
 			vs := mustCreateNewVaultSecret()
 
 			before := &vaultv1alpha1.VaultSecret{}
-			Expect(k8sClient.Get(ctx, namespacedName(vs), before)).To(Succeed())
+			Eventually(func() bool {
+				return k8sClient.Get(ctx, namespacedName(vs), before) == nil
+			}, timeout, interval).Should(BeTrue())
 			Expect(before.ObjectMeta.Finalizers).NotTo(ContainElement(finalizerName))
 
 			mustReconcile(vs)
 
 			after := &vaultv1alpha1.VaultSecret{}
 			Eventually(func() bool {
-				return k8sClient.Get(ctx, namespacedName(vs), after) != nil
+				return k8sClient.Get(ctx, namespacedName(vs), after) == nil
 			}, timeout, interval).Should(BeTrue())
 			Expect(after.ObjectMeta.Finalizers).To(ContainElement(finalizerName))
 		})
@@ -225,11 +227,13 @@ var _ = Describe("VaultSecretReconciler", func() {
 			mustReconcile(vs)
 
 			s := &corev1.Secret{}
-			Expect(k8sClient.Get(ctx, namespacedName(vs), s)).To(Succeed())
+			Eventually(func() bool {
+				return k8sClient.Get(ctx, namespacedName(vs), s) == nil
+			}, timeout, interval).Should(BeTrue())
 
 			before := &vaultv1alpha1.VaultSecret{}
 			Eventually(func() bool {
-				return k8sClient.Get(ctx, namespacedName(vs), before) != nil
+				return k8sClient.Get(ctx, namespacedName(vs), before) == nil
 			}, timeout, interval).Should(BeTrue())
 			Expect(before.ObjectMeta.Finalizers).To(ContainElement(finalizerName))
 
@@ -239,12 +243,12 @@ var _ = Describe("VaultSecretReconciler", func() {
 
 			after := &vaultv1alpha1.VaultSecret{}
 			Eventually(func() bool {
-				return k8sClient.Get(ctx, namespacedName(vs), after) != nil
-			}, timeout, interval).Should(BeTrue())
+				return k8sClient.Get(ctx, namespacedName(vs), after) == nil
+			}, timeout, interval).Should(BeFalse())
 
 			Eventually(func() bool {
-				return k8sClient.Get(ctx, namespacedName(vs), s) != nil
-			}, timeout, interval).Should(BeTrue())
+				return k8sClient.Get(ctx, namespacedName(vs), s) == nil
+			}, timeout, interval).Should(BeFalse())
 		})
 		Context("handle if secret is gone already", func() {
 			vs := mustCreateNewVaultSecret()
@@ -252,25 +256,25 @@ var _ = Describe("VaultSecretReconciler", func() {
 
 			secret := &corev1.Secret{}
 			Eventually(func() bool {
-				return k8sClient.Get(ctx, namespacedName(vs), secret) != nil
+				return k8sClient.Get(ctx, namespacedName(vs), secret) == nil
 			}, timeout, interval).Should(BeTrue())
 
 			vaultSecret := &vaultv1alpha1.VaultSecret{}
 			Eventually(func() bool {
-				return k8sClient.Get(ctx, namespacedName(vs), vaultSecret) != nil
+				return k8sClient.Get(ctx, namespacedName(vs), vaultSecret) == nil
 			}, timeout, interval).Should(BeTrue())
 			Expect(vaultSecret.ObjectMeta.Finalizers).To(ContainElement(finalizerName))
 
 			Expect(k8sClient.Delete(ctx, secret)).To(Succeed())
 			Eventually(func() bool {
-				return k8sClient.Get(ctx, namespacedName(vs), secret) != nil
-			}, timeout, interval).Should(BeTrue())
+				return k8sClient.Get(ctx, namespacedName(vs), secret) == nil
+			}, timeout, interval).Should(BeFalse())
 
 			Expect(k8sClient.Delete(ctx, vaultSecret)).To(Succeed())
 			mustReconcile(vs)
 			Eventually(func() bool {
-				return k8sClient.Get(ctx, namespacedName(vs), vaultSecret) != nil
-			}, timeout, interval).Should(BeTrue())
+				return k8sClient.Get(ctx, namespacedName(vs), vaultSecret) == nil
+			}, timeout, interval).Should(BeFalse())
 		})
 	})
 	It("can handle related secrets", func() {
@@ -279,7 +283,9 @@ var _ = Describe("VaultSecretReconciler", func() {
 			mustReconcile(vs)
 
 			s := &corev1.Secret{}
-			Expect(k8sClient.Get(ctx, namespacedName(vs), s)).To(Succeed())
+			Eventually(func() bool {
+				return k8sClient.Get(ctx, namespacedName(vs), s) == nil
+			}, timeout, interval).Should(BeTrue())
 			Expect(s.Data["foo"]).To(Equal([]byte("fizzbuzz")))
 		})
 		Context("create for new secret dataFrom", func() {
@@ -290,7 +296,10 @@ var _ = Describe("VaultSecretReconciler", func() {
 			_, err = testVSR.Reconcile(context.Background(), req)
 			Expect(err).ToNot(HaveOccurred())
 			s := &corev1.Secret{}
-			err = k8sClient.Get(ctx, req.NamespacedName, s)
+
+			Eventually(func() bool {
+				return k8sClient.Get(ctx, req.NamespacedName, s) == nil
+			}, timeout, interval).Should(BeTrue())
 			Expect(err).ToNot(HaveOccurred())
 			Expect(s.Data["bax"]).To(Equal([]byte("fixxbaxx")))
 			Expect(s.Data["baz"]).To(Equal([]byte("foo")))
@@ -303,14 +312,18 @@ var _ = Describe("VaultSecretReconciler", func() {
 
 			mustReconcile(vs)
 
-			Expect(k8sClient.Get(ctx, namespacedName(vs), s)).To(Succeed())
+			Eventually(func() bool {
+				return k8sClient.Get(ctx, namespacedName(vs), s) == nil
+			}, timeout, interval).Should(BeTrue())
 			Expect(s.Data["foobin"]).To(Equal([]byte("fizzbuzzb")))
 		})
 		Context("create for existing secret", func() {
 			vs := newVaultSecret()
 			s := newSecret(vs.ObjectMeta.Name)
 			Expect(k8sClient.Create(ctx, s)).To(Succeed())
-			Expect(k8sClient.Get(ctx, namespacedName(vs), s)).To(Succeed())
+			Eventually(func() bool {
+				return k8sClient.Get(ctx, namespacedName(vs), s) == nil
+			}, timeout, interval).Should(BeTrue())
 			Expect(s.Data["foo"]).To(Equal([]byte("nothing")))
 
 			Expect(k8sClient.Create(ctx, vs)).To(Succeed())
@@ -321,7 +334,9 @@ var _ = Describe("VaultSecretReconciler", func() {
 			s := newSecret(vs.ObjectMeta.Name)
 			req := newRequestFor(vs)
 			Expect(k8sClient.Create(ctx, s)).To(Succeed())
-			Expect(k8sClient.Get(ctx, req.NamespacedName, s)).To(Succeed())
+			Eventually(func() bool {
+				return k8sClient.Get(ctx, req.NamespacedName, s) == nil
+			}, timeout, interval).Should(BeTrue())
 			Expect(s.Data["foo"]).To(Equal([]byte("nothing")))
 			Expect(s.Data["bar"]).To(Equal([]byte("nothingelse")))
 		})
@@ -341,7 +356,6 @@ var _ = Describe("VaultSecretReconciler", func() {
 				}
 			})
 			mustReconcile(vs)
-
 			Expect(testVaultClient.Get("app/test/bar", "baz", 0)).To(Equal("fizzbuzz"))
 		})
 		Context("existant vault path with generator update necessary", func() {
@@ -379,7 +393,10 @@ var _ = Describe("VaultSecretReconciler", func() {
 			mustReconcile(vs)
 
 			s := &corev1.Secret{}
-			Expect(k8sClient.Get(ctx, namespacedName(vs), s)).To(Succeed())
+
+			Eventually(func() bool {
+				return k8sClient.Get(ctx, namespacedName(vs), s) == nil
+			}, timeout, interval).Should(BeTrue())
 			Expect(s.Type).To(Equal(corev1.SecretTypeDockerConfigJson))
 			Expect(s.Data[".dockerconfigjson"]).To(Equal([]byte(testDockerConfigJSON)))
 		})
@@ -400,7 +417,9 @@ var _ = Describe("VaultSecretReconciler", func() {
 			mustReconcile(vs)
 
 			s := &corev1.Secret{}
-			Expect(k8sClient.Get(ctx, namespacedName(vs), s)).To(Succeed())
+			Eventually(func() bool {
+				return k8sClient.Get(ctx, namespacedName(vs), s) == nil
+			}, timeout, interval).Should(BeTrue())
 			Expect(s.Type).To(Equal(corev1.SecretTypeTLS))
 		})
 	})
@@ -424,7 +443,9 @@ var _ = Describe("VaultSecretReconciler", func() {
 			mustReconcile(vs)
 
 			s := &corev1.Secret{}
-			Expect(k8sClient.Get(ctx, namespacedName(vs), s)).To(Succeed())
+			Eventually(func() bool {
+				return k8sClient.Get(ctx, namespacedName(vs), s) == nil
+			}, timeout, interval).Should(BeTrue())
 			Expect(s.Data["template"]).To(Equal([]byte("testfizzbuzz")))
 		})
 		Context("without variables", func() {
@@ -437,7 +458,9 @@ var _ = Describe("VaultSecretReconciler", func() {
 			mustReconcile(vs)
 
 			s := &corev1.Secret{}
-			Expect(k8sClient.Get(ctx, namespacedName(vs), s)).To(Succeed())
+			Eventually(func() bool {
+				return k8sClient.Get(ctx, namespacedName(vs), s) == nil
+			}, timeout, interval).Should(BeTrue())
 			Expect(s.Data["template"]).To(Equal([]byte("static")))
 		})
 	})
@@ -449,7 +472,9 @@ var _ = Describe("VaultSecretReconciler", func() {
 			mustReconcile(vs)
 
 			s := &corev1.Secret{}
-			Expect(k8sClient.Get(ctx, namespacedName(vs), s)).To(Succeed())
+			Eventually(func() bool {
+				return k8sClient.Get(ctx, namespacedName(vs), s) == nil
+			}, timeout, interval).Should(BeTrue())
 			Expect(s.Data["foo"]).To(Equal([]byte("buzzfizz")))
 		})
 		Context("latest version", func() {
@@ -457,7 +482,9 @@ var _ = Describe("VaultSecretReconciler", func() {
 			mustReconcile(vs)
 
 			s := &corev1.Secret{}
-			Expect(k8sClient.Get(ctx, namespacedName(vs), s)).To(Succeed())
+			Eventually(func() bool {
+				return k8sClient.Get(ctx, namespacedName(vs), s) == nil
+			}, timeout, interval).Should(BeTrue())
 			Expect(s.Data["foo"]).To(Equal([]byte("fizzbuzz")))
 		})
 	})
@@ -473,7 +500,9 @@ var _ = Describe("VaultSecretReconciler", func() {
 			mustReconcile(vs)
 
 			s := &corev1.Secret{}
-			Expect(k8sClient.Get(ctx, namespacedName(vs), s)).To(Succeed())
+			Eventually(func() bool {
+				return k8sClient.Get(ctx, namespacedName(vs), s) == nil
+			}, timeout, interval).Should(BeTrue())
 
 			_, err := uuid.Parse(string(s.Data["foo"]))
 			Expect(err).ToNot(HaveOccurred())
