@@ -17,11 +17,9 @@ package controllers
 import (
 	"context"
 	"fmt"
-	"os"
 	"path/filepath"
 	"strings"
 	"testing"
-	"time"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -47,7 +45,7 @@ import (
 // +kubebuilder:docs-gen:collapse=Imports
 
 const (
-	testNamespace        = "test-namespace"
+	testNamespace        = "test"
 	testDockerConfigJSON = "{\"auths\":{\"https://index.docker.io/v1/\":{\"auth\":\"\"}}}"
 )
 
@@ -73,13 +71,13 @@ func TestAPIs(t *testing.T) {
 var _ = BeforeSuite(func() {
 	logf.SetLogger(zap.New(zap.WriteTo(GinkgoWriter), zap.UseDevMode(true)))
 
-	ctx, cancel = context.WithCancel(context.TODO())
+	ctx, cancel = context.WithCancel(context.Background())
 
 	/*
 		First, the envtest cluster is configured to read CRDs from the CRD directory Kubebuilder scaffolds for you.
 	*/
 	By("bootstrapping test environment")
-	Expect(os.Setenv("KUBEBUILDER_ASSETS", "../tools")).To(Succeed())
+	// Expect(os.Setenv("KUBEBUILDER_ASSETS", "../tools")).To(Succeed())
 
 	testEnv = &envtest.Environment{
 		CRDDirectoryPaths:     []string{filepath.Join("..", "config", "crd", "bases")},
@@ -96,19 +94,6 @@ var _ = BeforeSuite(func() {
 	err = vaultv1alpha1.AddToScheme(scheme.Scheme)
 	Expect(err).NotTo(HaveOccurred())
 
-	// +kubebuilder:scaffold:scheme
-
-	k8sClient, err = client.New(cfg, client.Options{Scheme: scheme.Scheme})
-	Expect(err).ToNot(HaveOccurred())
-	Expect(k8sClient).ToNot(BeNil())
-
-	err = k8sClient.Create(ctx, &v1.Namespace{
-		ObjectMeta: metav1.ObjectMeta{
-			Name: testNamespace,
-		},
-	})
-	Expect(err).ToNot(HaveOccurred())
-
 	testVaultServer, err = vault.NewDevServer() // via `vault server -dev`
 	Expect(err).ToNot(HaveOccurred())
 	testVaultClient, err = testVaultServer.GetClient("")
@@ -119,7 +104,7 @@ var _ = BeforeSuite(func() {
 	testWithEnterprise = strings.Contains(health.Version, "+prem")
 	namespace := "" // if no enterprise test Vault server is present just test on root namespace
 	if testWithEnterprise {
-		namespace = "testnamespace"
+		namespace = "test-vault-ns"
 		// First enable a secret engine in the root namespace and create a secret
 		// which the VaultOperator will not be able to access using its namespaced client
 		Expect(testVaultServer.ExecCommand("secrets", "enable", "-version=2", "-path=app", "kv")).To(Succeed())
@@ -131,6 +116,7 @@ var _ = BeforeSuite(func() {
 		testVaultClient, err = testVaultServer.GetClient(namespace)
 		Expect(err).ToNot(HaveOccurred())
 	}
+
 	// Create test Vaults in either the root or the dedicated test namespace
 	Expect(testVaultServer.ExecCommand("secrets", "enable", "-namespace", namespace, "-version=2", "-path=app", "kv")).To(Succeed())
 	Expect(testVaultServer.ExecCommand("secrets", "enable", "-namespace", namespace, "-version=2", "-path=cert", "kv")).To(Succeed())
@@ -140,6 +126,18 @@ var _ = BeforeSuite(func() {
 	Expect(testVaultServer.ExecCommand("kv", "put", "-namespace", namespace, "app/test/binbar", "baz=Zml6emJ1enpi", ".baz_isBinary=1")).To(Succeed())
 	Expect(testVaultServer.ExecCommand("kv", "put", "-namespace", namespace, "app/test/docker", "baz="+testDockerConfigJSON)).To(Succeed())
 	Expect(testVaultServer.ExecCommand("kv", "get", "-namespace", namespace, "-version=1", "app/test/bar")).To(Succeed())
+
+	k8sClient, err = client.New(cfg, client.Options{Scheme: scheme.Scheme})
+	Expect(err).ToNot(HaveOccurred())
+	Expect(k8sClient).ToNot(BeNil())
+	Expect(err).ToNot(HaveOccurred())
+
+	err = k8sClient.Create(ctx, &v1.Namespace{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: testNamespace,
+		},
+	})
+	Expect(err).ToNot(HaveOccurred())
 
 	k8sManager, err := ctrl.NewManager(cfg, ctrl.Options{
 		Scheme: scheme.Scheme,
@@ -160,8 +158,6 @@ var _ = BeforeSuite(func() {
 		err = k8sManager.Start(ctx)
 		Expect(err).ToNot(HaveOccurred(), "failed to run manager")
 	}()
-
-	time.Sleep(5000)
 })
 
 var _ = AfterSuite(func() {
@@ -177,9 +173,7 @@ var _ = AfterSuite(func() {
 	testVaultClient.Close()
 })
 
-// Helper functions
 func newTestName() string {
-	cancel()
 	testNameCounter += 1
 	return fmt.Sprintf("test%d", testNameCounter)
 }
