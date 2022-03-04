@@ -10,7 +10,7 @@ HELM ?= helm
 
 # Tools managed by this project
 GINKGO ?= $(TOOLS_DIR)/ginkgo
-GINKO_VERSION  ?= v1.16.4
+GINKO_VERSION ?= v1.16.4
 
 LINTER ?= $(TOOLS_DIR)/golangci-lint
 LINTER_VERSION ?= v1.43.0
