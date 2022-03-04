@@ -99,7 +99,7 @@ func (h *TokenHandler) run() {
 		default:
 		}
 
-		renewer, err := h.client.NewRenewer(&api.RenewerInput{Secret: secret})
+		renewer, err := h.client.NewLifetimeWatcher(&api.RenewerInput{Secret: secret})
 		if err != nil {
 			h.log.Error(err, "Failed to start token renewer.")
 		}
