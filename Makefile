@@ -41,6 +41,12 @@ all: $(MANAGER_BIN)
 $(MANAGER_BIN): generate fmt vet
 	$(GO) build -o $(MANAGER_BIN) ./main.go
 
+add-license: ## Adds the license to every file
+	@docker run --rm -v "$(PWD):/src" -u $(shell id -u) ghcr.io/google/addlicense --ignore **/*.yaml --ignore **/*.yml -c "VaultOperator Authors" -l "apache" -v .
+
+check-license: ## Checks thath the license is set on every file
+	@docker run --rm -v "$(PWD):/src" -u $(shell id -u) ghcr.io/google/addlicense --ignore **/*.yaml --ignore **/*.yml -c "VaultOperator Authors" -l "apache" -v -check .
+
 lint: $(LINTER) helm-lint go-lint
 
 test: $(GINKGO) $(KUBEBUILDER) $(VAULT) generate fmt vet manifests 
@@ -71,7 +77,6 @@ manifests: $(CONTROLLER_GEN) $(KUSTOMIZE)
 
 # Generate code using controller-gen
 generate: $(CONTROLLER_GEN)
-	$(CONTROLLER_GEN) object:headerFile="hack/boilerplate.go.txt" paths="./..."
 
 helm-install:
 	$(HELM) upgrade --install $(HELM_RELEASE_NAME) --namespace $(HELM_NAMESPACE) $(HELM_CHART_DIR)
