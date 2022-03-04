@@ -468,7 +468,6 @@ var _ = Describe("VaultSecretReconciler", func() {
 		}
 	})
 	It("allows vault paths", func() {
-
 		for _, test := range []struct {
 			desc       string
 			path       string
@@ -484,7 +483,7 @@ var _ = Describe("VaultSecretReconciler", func() {
 			},
 			{
 				desc: "with scope matching pre-defined identifier",
-				path: "app/finleap/foo",
+				path: "app/shared/foo",
 			},
 		} {
 			Context(test.desc, func() {
