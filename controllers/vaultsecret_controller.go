@@ -465,9 +465,11 @@ func (r *VaultSecretReconciler) checkPermission(vaultSecret *vaultv1alpha1.Vault
 		sharedPaths := strings.Split(os.Getenv("SHARED_PATHS"), ",")
 		switch {
 		case secondSegment == vaultSecret.ObjectMeta.Namespace: // namespace of the VaultSecret itself
+			return nil
 		case util.ContainsString(sharedPaths, secondSegment):
 			return nil
 		}
+		r.Log.Error(ErrPermissionDenied, "second segment must be equal to VaultSecret namespace or in shared paths", "secondSegment", secondSegment, "namespace", vaultSecret.ObjectMeta.Namespace, "sharedPaths", os.Getenv("SHARED_PATHS"))
 	}
 	return ErrPermissionDenied
 }

@@ -144,13 +144,15 @@ var _ = BeforeSuite(func() {
 	})
 	Expect(err).ToNot(HaveOccurred())
 
-	err = (&VaultSecretReconciler{
+	testVSR = &VaultSecretReconciler{
 		Client:   k8sManager.GetClient(),
 		Scheme:   k8sManager.GetScheme(),
 		Log:      logf.Log.WithName("controllers").WithName("VaultSecret"),
 		Recorder: &record.FakeRecorder{}, // dummy recorder
 		Vault:    testVaultClient,
-	}).SetupWithManager(k8sManager)
+	}
+
+	err = (testVSR).SetupWithManager(k8sManager)
 	Expect(err).ToNot(HaveOccurred())
 
 	go func() {
