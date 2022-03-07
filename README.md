@@ -1,5 +1,11 @@
 # `vault-operator`
 
+[![Build status](https://github.com/finleap-connect/vaultoperator/actions/workflows/golang.yaml/badge.svg)](https://github.com/finleap-connect/vaultoperator/actions/workflows/golang.yaml)
+[![Coverage Status](https://coveralls.io/repos/github/finleap-connect/vaultoperator/badge.svg?branch=main)](https://coveralls.io/github/finleap-connect/vaultoperator?branch=main)
+[![Go Report Card](https://goreportcard.com/badge/github.com/finleap-connect/vaultoperator)](https://goreportcard.com/report/github.com/finleap-connect/vaultoperator)
+[![Go Reference](https://pkg.go.dev/badge/github.com/finleap-connect/vaultoperator.svg)](https://pkg.go.dev/github.com/finleap-connect/vaultoperator)
+[![GitHub release](https://img.shields.io/github/release/finleap-connect/vaultoperator.svg)](https://github.com/finleap-connect/vaultoperator/releases)
+
 The `vault-operator` provides several CRDs to interact securely and indirectly with secrets.
 ## Details
 
