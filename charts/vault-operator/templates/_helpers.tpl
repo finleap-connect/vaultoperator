@@ -40,8 +40,6 @@ helm.sh/chart: {{ include "vault-operator.chart" . }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
-app: vault-operator
-control-plane: controller-manager
 {{- end }}
 
 {{/*
@@ -50,4 +48,15 @@ Selector labels
 {{- define "vault-operator.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "vault-operator.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+
+{{/*
+Create the name of the service account to use
+*/}}
+{{- define "vault-operator.serviceAccountName" -}}
+{{- if .Values.serviceAccount.create }}
+{{- default (include "vault-operator.fullname" .) .Values.serviceAccount.name }}
+{{- else }}
+{{- default "default" .Values.serviceAccount.name }}
+{{- end }}
 {{- end }}

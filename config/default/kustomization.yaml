@@ -1,13 +1,6 @@
 # Adds namespace to all resources.
 namespace: vault-operator-system
 
-# Value of this field is prepended to the
-# names of all resources, e.g. a deployment named
-# "wordpress" becomes "alices-wordpress".
-# Note that it should also match with the prefix (text before '-') of the namespace
-# field above.
-namePrefix: vault-operator-
-
 # Labels to add to all resources and selectors.
 #commonLabels:
 #  someName: someValue
@@ -60,11 +53,11 @@ vars:
 #  objref:
 #    kind: Service
 #    version: v1
-#    name: webhook-service
+#    name: "{{ include "vault-operator.fullname" . }}-webhook"
 #  fieldref:
 #    fieldpath: metadata.namespace
 #- name: SERVICE_NAME
 #  objref:
 #    kind: Service
 #    version: v1
-#    name: webhook-service
+#    name: "{{ include "vault-operator.fullname" . }}-webhook"

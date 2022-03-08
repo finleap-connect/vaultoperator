@@ -1,0 +1,20 @@
+---
+# Source: vault-operator/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: vaop-vault-operator
+  labels:
+    helm.sh/chart: vault-operator-0.0.1
+    app.kubernetes.io/name: vault-operator
+    app.kubernetes.io/instance: vaop
+    app.kubernetes.io/version: "0.0.1"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  ports:
+  - name: metrics
+    port: 8080
+    targetPort: 8080
+  selector:
+    app.kubernetes.io/name: vault-operator
+    app.kubernetes.io/instance: vaop

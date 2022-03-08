@@ -1,0 +1,16 @@
+---
+# Source: vault-operator/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vault-operator-env
+  labels:
+    helm.sh/chart: vault-operator-0.0.1
+    app.kubernetes.io/name: vault-operator
+    app.kubernetes.io/instance: vaop
+    app.kubernetes.io/version: "0.0.1"
+    app.kubernetes.io/managed-by: Helm
+data:
+  VAULT_ADDR: 
+  VAULT_NAMESPACE: ""
+  SHARED_PATHS: "shared"

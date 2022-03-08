@@ -1,0 +1,9 @@
+---
+# Source: vault-operator/templates/cluster-rolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: vaop-vault-operator-manager
+subjects:
+- kind: ServiceAccount
+  name: vault-operator

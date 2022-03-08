@@ -1,0 +1,7 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "vault-operator.fullname" . }}-manager
+subjects:
+- kind: ServiceAccount
+  name: {{ include "vault-operator.serviceAccountName" . }}

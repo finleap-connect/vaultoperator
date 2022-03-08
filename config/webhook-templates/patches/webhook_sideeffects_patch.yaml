@@ -1,3 +1,6 @@
 - op: add
   path: /webhooks/0/sideEffects
   value: None
+- op: replace
+  path: /webhooks/0/clientConfig/service/name
+  value: '{{ include "vault-operator.fullname" . }}-webhook'
