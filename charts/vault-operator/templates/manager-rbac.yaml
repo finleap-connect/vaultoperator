@@ -58,3 +58,4 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: {{ include "vault-operator.serviceAccountName" . }}
+  namespace: '{{ .Release.Namespace }}'
