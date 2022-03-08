@@ -1,7 +1,0 @@
-namespace: "{{ .Release.Namespace }}"
-
-resources:
-- serviceaccount.yaml
-
-bases:
-- ./base

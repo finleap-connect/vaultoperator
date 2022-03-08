@@ -14,7 +14,7 @@ spec:
     webhookClientConfig:
       caBundle: Cg==
       service:
-        name: vault-operator-webhook-service
+        name: '{{ include "vault-operator.fullname" . }}-webhook'
         namespace: '{{ .Release.Namespace }}'
         path: /convert
   group: vault.finleap.cloud

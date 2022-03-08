@@ -4,7 +4,6 @@ metadata:
   name: {{ include "vault-operator.fullname" . }}
   labels:
     {{- include "vault-operator.labels" . | nindent 4 }}
-    control-plane: controller-manager
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -23,7 +22,7 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: vault-operator
+      serviceAccountName: {{ include "vault-operator.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:

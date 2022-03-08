@@ -6,9 +6,9 @@
 !/tools/vault-install
 /bin
 /reports
+/tmp
 
 *.coverprofile
-
 
 # Binaries for programs and plugins
 *.exe

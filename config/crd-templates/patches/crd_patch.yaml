@@ -8,6 +8,6 @@ spec:
   conversion:
     webhookClientConfig:
       service:
-        name: vault-operator-webhook-service
+        name: '{{ include "vault-operator.fullname" . }}-webhook'
   preserveUnknownFields: false
 
