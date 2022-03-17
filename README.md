@@ -7,6 +7,40 @@
 [![GitHub release](https://img.shields.io/github/release/finleap-connect/vaultoperator.svg)](https://github.com/finleap-connect/vaultoperator/releases)
 
 The `vault-operator` provides several CRDs to interact securely and indirectly with secrets.
+
+## Quick start
+
+Add the helm repository to your list of repos:
+
+```bash
+$ helm repo add finleap-connect https://finleap-connect.github.io/charts/
+$ helm repo update
+```
+
+Execute the following to get the complete list of values available:
+
+```bash
+helm show values finleap-connect/vault-operator --version <VERSION>
+```
+
+Configure at least the following settings within your `values.yaml` :
+```yaml
+# Configure Vault connection
+vault:
+  addr: "" # Address of the Vault instance
+  tls:
+    secretName: "" # Specify secret containing CA to access Vault
+  credentials:
+    secretName: "" # Specify secret containing AppRole credentials as fields VAULT_ROLE_ID and VAULT_SECRET_ID, see https://www.vaultproject.io/docs/auth/approle
+  namespace: "" # Which Vault namespace to connect to
+```
+
+Install VaultOperator with the following command:
+
+```bash
+$ helm install finleap-connect/vault-operator --name myrealease --version <VERSION> --values values.yaml
+```
+
 ## Details
 
 Currently only _stage 1_ is implemented, which includes the `VaultSecret`-CRD.
@@ -97,4 +131,3 @@ The test suite needs the kubebuilder assets. If they are not installed in the de
 path make sure to set `KUBEBUILDER_ASSETS` before running tests.
 Similarly the vault CLI needs to be setup, if it is outside your `PATH` make sure to
 set `VAULT_ASSETS` to the directory containing the vault executable.
-
