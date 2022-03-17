@@ -39,7 +39,7 @@ spec:
         - configMapRef:
             name: vault-operator-env
         - secretRef:
-            name: vault-operator-creds
+            name: {{ required "A valid .Values.vault.credentials.secretName is required!" .Values.vault.credentials.secretName }}
         ports:
         - containerPort: 443
           name: webhook-server
@@ -79,7 +79,7 @@ spec:
       {{- if .Values.vault.tls.secretName }}
       - name: tls-certs
         secret:
-          secretName: {{ .Values.vault.tls.secretName }}
+          secretName: {{ required "A valid .Values.vault.tls.secretName is required!" .Values.vault.tls.secretName }}
       {{- end }}
 
 

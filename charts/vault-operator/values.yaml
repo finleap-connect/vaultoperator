@@ -36,16 +36,18 @@ securityContext: {}
 
 terminationGracePeriodSeconds: 10
 
-# Set this to false for GKE, which runs a CertManager, which only
+# Set this to false for older CertManager, which only
 # supports the cert-manager.io/v1 API
 useOldCertManager: true
 
 # Configure Vault connection
 vault:
-  addr: "" # Address of the Vault instance
+  addr: "" # Required address of Vault
   tls:
-    secretName: "" # Specify secret containing CA to access Vault
-  namespace: "" # Which Vault namespace to connect to
+    secretName: "" # Required secret containing CA to access Vault
+  credentials:
+    secretName: "" # Required secret containing AppRole credentials as fields VAULT_ROLE_ID and VAULT_SECRET_ID, see https://www.vaultproject.io/docs/auth/approle
+  namespace: "" # Optional Vault namespace to connect to
 
 # Set which paths in Vault are allowed to be accessed from any namespace
 sharedPaths:

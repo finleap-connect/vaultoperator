@@ -5,6 +5,6 @@ metadata:
   labels:
     {{- include "vault-operator.labels" . | nindent 4 }}
 data:
-  VAULT_ADDR: {{ .Values.vault.addr }}
+  VAULT_ADDR: {{ required "A valid .Values.vault.addr is required!" .Values.vault.addr }}
   VAULT_NAMESPACE: {{ .Values.vault.namespace | quote }}
   SHARED_PATHS: {{ join "," .Values.sharedPaths | quote }}
