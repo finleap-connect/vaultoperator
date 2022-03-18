@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/Masterminds/sprig v2.22.0+incompatible
 	github.com/cenkalti/backoff v2.2.1+incompatible
-	github.com/go-logr/logr v0.4.0
+	github.com/go-logr/logr v1.2.3
 	github.com/google/uuid v1.1.2
 	github.com/hashicorp/vault/api v1.4.1
 	github.com/onsi/ginkgo v1.16.5
