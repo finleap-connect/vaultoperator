@@ -7,7 +7,7 @@ require (
 	github.com/cenkalti/backoff v2.2.1+incompatible
 	github.com/go-logr/logr v0.4.0
 	github.com/google/uuid v1.1.2
-	github.com/hashicorp/vault/api v1.4.1
+	github.com/hashicorp/vault/api v1.5.0
 	github.com/onsi/ginkgo v1.16.5
 	github.com/onsi/gomega v1.18.1
 	github.com/pkg/errors v0.9.1
