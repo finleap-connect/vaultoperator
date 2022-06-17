@@ -22,8 +22,8 @@ on:
   
 env:
   GO_MODULE: github.com/finleap-connect/vaultoperator
-  GO_VERSION: 1.17
-  GOLINT_VERSION: v1.39
+  GO_VERSION: 1.18.x
+  GOLINT_VERSION: v1.46.1
 
 jobs:
   lint:
