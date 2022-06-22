@@ -22,8 +22,8 @@ on:
   
 env:
   GO_MODULE: github.com/finleap-connect/vaultoperator
-  GO_VERSION: 1.17
-  GOLINT_VERSION: v1.39
+  GO_VERSION: 1.18.x
+  GO_CI_LINT_VERSION: v1.46.1
 
 jobs:
   lint:
@@ -38,7 +38,7 @@ jobs:
       - name: Run linters
         uses: golangci/golangci-lint-action@v3
         with:
-          version: ${{ env.GOLINT_VERSION }}
+          version: ${{ env.GO_CI_LINT_VERSION }}
           args: --timeout=5m
 
   test:
@@ -57,7 +57,7 @@ jobs:
           make go-test
           make go-coverage
       - name: Convert coverage to lcov
-        uses: jandelgado/gcov2lcov-action@v1.0.8
+        uses: jandelgado/gcov2lcov-action@v1.0.9
         with:
           infile: .coverprofile
       - name: Coveralls GitHub Action
