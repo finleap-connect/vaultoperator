@@ -6,8 +6,9 @@ metadata:
     cert-manager.io/inject-ca-from: '{{ .Release.Namespace }}/vault-operator-cert'
 spec:
   conversion:
-    webhookClientConfig:
-      service:
-        name: '{{ include "vault-operator.fullname" . }}-webhook'
+    webhook:
+      clientConfig:
+        service:
+          name: '{{ include "vault-operator.fullname" . }}-webhook'
   preserveUnknownFields: false
 
