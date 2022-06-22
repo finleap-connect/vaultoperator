@@ -8,3 +8,4 @@ data:
   VAULT_ADDR: {{ required "A valid .Values.vault.addr is required!" .Values.vault.addr }}
   VAULT_NAMESPACE: {{ .Values.vault.namespace | quote }}
   SHARED_PATHS: {{ join "," .Values.sharedPaths | quote }}
+  ALLOWED_ENGINES: {{ join "," .Values.allowedSecretEngines | quote }}

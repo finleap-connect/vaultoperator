@@ -4,3 +4,9 @@
 - op: replace
   path: /webhooks/0/clientConfig/service/name
   value: '{{ include "vault-operator.fullname" . }}-webhook'
+- op: replace
+  path: /webhooks/0/clientConfig/service/name
+  value: '{{ include "vault-operator.fullname" . }}-webhook'
+- op: replace
+  path: /apiVersion
+  value: admissionregistration.k8s.io/v1

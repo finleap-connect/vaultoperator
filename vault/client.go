@@ -36,7 +36,7 @@ type Client struct {
 	tokenHandler *TokenHandler
 }
 
-func NewClient(addr string, namespace string, method AuthMethod) (*Client, error) {
+func NewClient(addr, namespace string, method AuthMethod) (*Client, error) {
 	var err error
 	c := &Client{log: ctrl.Log.WithName("VaultClient")}
 	cfg := api.DefaultConfig()
@@ -60,6 +60,7 @@ func NewClient(addr string, namespace string, method AuthMethod) (*Client, error
 	if c.Token() == "" {
 		return nil, ErrMissingToken
 	}
+
 	return c, nil
 }
 
@@ -130,20 +131,15 @@ func (c *Client) CreateOrUpdate(path string, data map[string]interface{}) error 
 	for k, v := range data {
 		merged[k] = v
 	}
-	req := c.NewRequest("PUT", "/v1/"+path)
 	payload := map[string]interface{}{
 		"data": merged,
 		"cas":  cas,
 	}
-	if err := req.SetJSONBody(payload); err != nil {
-		return err
-	}
+
 	ctx, cancelFunc := context.WithCancel(context.Background())
 	defer cancelFunc()
-	res, err := c.RawRequestWithContext(ctx, req)
-	if res != nil {
-		defer res.Body.Close()
-	}
+
+	_, err = c.Logical().WriteWithContext(ctx, path, payload)
 	if err != nil {
 		return err
 	}

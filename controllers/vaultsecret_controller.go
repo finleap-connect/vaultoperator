@@ -23,7 +23,7 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/Masterminds/sprig"
+	"github.com/Masterminds/sprig/v3"
 	"github.com/go-logr/logr"
 	"github.com/google/uuid"
 	corev1 "k8s.io/api/core/v1"
@@ -449,12 +449,14 @@ func (r *VaultSecretReconciler) checkPermission(vaultSecret *vaultv1alpha1.Vault
 		return ErrInvalidVaultPath
 	}
 
+	allowedEngines := strings.Split(os.Getenv("ALLOWED_ENGINES"), ",")
+
 	firstSegment := segments[0]
 	if firstSegment == "cert" {
 		return nil
 	}
-	if firstSegment == "app" {
-		// The Vault path should be scoped (e.g. app/<namespace>/<key-name>) and thus consist
+	if util.ContainsString(allowedEngines, firstSegment) {
+		// The Vault path should be scoped (e.g. <allowed-engine>/<namespace>/<key-name>) and thus consist
 		// of at least 3 parts.
 		if len(segments) < 3 {
 			return ErrInvalidVaultPath

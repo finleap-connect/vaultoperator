@@ -36,10 +36,6 @@ securityContext: {}
 
 terminationGracePeriodSeconds: 10
 
-# Set this to false for older CertManager, which only
-# supports the cert-manager.io/v1 API
-useOldCertManager: true
-
 # Configure Vault connection
 vault:
   addr: "" # Required address of Vault
@@ -48,6 +44,9 @@ vault:
   credentials:
     secretName: "" # Required secret containing AppRole credentials as fields VAULT_ROLE_ID and VAULT_SECRET_ID, see https://www.vaultproject.io/docs/auth/approle
   namespace: "" # Optional Vault namespace to connect to
+
+allowedSecretEngines:
+  - app
 
 # Set which paths in Vault are allowed to be accessed from any namespace
 sharedPaths:
