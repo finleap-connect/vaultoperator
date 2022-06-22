@@ -18,6 +18,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -130,20 +131,18 @@ func (c *Client) CreateOrUpdate(path string, data map[string]interface{}) error 
 	for k, v := range data {
 		merged[k] = v
 	}
-	req := c.NewRequest("PUT", "/v1/"+path)
 	payload := map[string]interface{}{
 		"data": merged,
 		"cas":  cas,
 	}
-	if err := req.SetJSONBody(payload); err != nil {
-		return err
-	}
 	ctx, cancelFunc := context.WithCancel(context.Background())
 	defer cancelFunc()
-	res, err := c.RawRequestWithContext(ctx, req)
-	if res != nil {
-		defer res.Body.Close()
+
+	vaultMountPath := os.Getenv("VAULT_MOUNT_PATH")
+	if len(vaultMountPath) == 0 {
+		return errors.New("VAULT_MOUNT_PATH environment variable not set")
 	}
+	_, err = c.KVv2(vaultMountPath).Put(ctx, path, payload)
 	if err != nil {
 		return err
 	}
