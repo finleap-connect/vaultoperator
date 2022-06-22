@@ -3,7 +3,6 @@ module github.com/finleap-connect/vaultoperator
 go 1.18
 
 require (
-	github.com/Masterminds/sprig v2.22.0+incompatible
 	github.com/cenkalti/backoff v2.2.1+incompatible
 	github.com/go-logr/logr v0.4.0
 	github.com/google/uuid v1.1.2
@@ -19,9 +18,15 @@ require (
 )
 
 require (
+	github.com/Masterminds/semver/v3 v3.1.1 // indirect
+	github.com/shopspring/decimal v1.2.0 // indirect
+	github.com/spf13/cast v1.3.1 // indirect
+)
+
+require (
 	cloud.google.com/go v0.54.0 // indirect
-	github.com/Masterminds/goutils v1.1.0 // indirect
-	github.com/Masterminds/semver v1.5.0 // indirect
+	github.com/Masterminds/goutils v1.1.1 // indirect
+	github.com/Masterminds/sprig/v3 v3.2.2
 	github.com/armon/go-metrics v0.3.9 // indirect
 	github.com/armon/go-radix v1.0.0 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
