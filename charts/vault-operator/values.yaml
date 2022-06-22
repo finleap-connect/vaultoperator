@@ -36,10 +36,6 @@ securityContext: {}
 
 terminationGracePeriodSeconds: 10
 
-# Set this to false for older CertManager, which only
-# supports the cert-manager.io/v1 API
-useOldCertManager: true
-
 # Configure Vault connection
 vault:
   addr: "" # Required address of Vault

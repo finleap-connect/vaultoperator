@@ -1,9 +1,5 @@
 ---
-{{- if .Values.useOldCertManager }}
-apiVersion: cert-manager.io/v1alpha2
-{{- else }}
 apiVersion: cert-manager.io/v1
-{{- end }}
 kind: Issuer
 metadata:
   name: selfsigned-issuer
@@ -12,11 +8,7 @@ metadata:
 spec:
   selfSigned: {}
 ---
-{{- if .Values.useOldCertManager }}
-apiVersion: cert-manager.io/v1alpha2
-{{- else }}
 apiVersion: cert-manager.io/v1
-{{- end }}
 kind: Certificate
 metadata:
   name: vault-operator-cert
