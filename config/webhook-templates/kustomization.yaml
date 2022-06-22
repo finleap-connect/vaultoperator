@@ -9,7 +9,6 @@ patchesStrategicMerge:
 patches:
 - target:
     group: admissionregistration.k8s.io
-    version: v1beta1
     kind: ValidatingWebhookConfiguration
     name: validating-webhook-configuration
   path: patches/webhook_sideeffects_patch.yaml
