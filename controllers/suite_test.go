@@ -78,7 +78,7 @@ var _ = BeforeSuite(func() {
 	*/
 	By("bootstrapping test environment")
 	Expect(os.Setenv("SHARED_PATHS", "shared,common")).To(Succeed())
-	Expect(os.Setenv("VAULT_MOUNT_PATH", "app")).To(Succeed())
+	Expect(os.Setenv("ALLOWED_ENGINES", "app,secret")).To(Succeed())
 
 	testEnv = &envtest.Environment{
 		CRDDirectoryPaths:     []string{filepath.Join("..", "config", "crd", "bases")},

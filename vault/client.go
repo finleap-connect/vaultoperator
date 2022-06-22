@@ -18,7 +18,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -37,7 +36,7 @@ type Client struct {
 	tokenHandler *TokenHandler
 }
 
-func NewClient(addr string, namespace string, method AuthMethod) (*Client, error) {
+func NewClient(addr, namespace string, method AuthMethod) (*Client, error) {
 	var err error
 	c := &Client{log: ctrl.Log.WithName("VaultClient")}
 	cfg := api.DefaultConfig()
@@ -61,6 +60,7 @@ func NewClient(addr string, namespace string, method AuthMethod) (*Client, error
 	if c.Token() == "" {
 		return nil, ErrMissingToken
 	}
+
 	return c, nil
 }
 
@@ -135,14 +135,11 @@ func (c *Client) CreateOrUpdate(path string, data map[string]interface{}) error 
 		"data": merged,
 		"cas":  cas,
 	}
+
 	ctx, cancelFunc := context.WithCancel(context.Background())
 	defer cancelFunc()
 
-	vaultMountPath := os.Getenv("VAULT_MOUNT_PATH")
-	if len(vaultMountPath) == 0 {
-		return errors.New("VAULT_MOUNT_PATH environment variable not set")
-	}
-	_, err = c.KVv2(vaultMountPath).Put(ctx, path, payload)
+	_, err = c.Logical().WriteWithContext(ctx, path, payload)
 	if err != nil {
 		return err
 	}
