@@ -68,7 +68,7 @@ go-coverage: ## print coverage from coverprofiles
 
 .PHONY: test
 test: ginkgo manifests generate fmt vet envtest vault ## Run tests.
-	KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use $(ENVTEST_K8S_VERSION) -p path)" $(GINKGO) -r -v -cover --failFast -requireSuite -covermode count -outputdir=. -coverprofile=.coverprofile
+	KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use $(ENVTEST_K8S_VERSION) -p path)" PATH="$(PATH):$(LOCALBIN)" $(GINKGO) -r -v -cover --failFast -requireSuite -covermode count -outputdir=. -coverprofile=.coverprofile
 
 ##@ Build
 
@@ -117,6 +117,10 @@ undeploy: ## Undeploy controller from the K8s cluster specified in ~/.kube/confi
 LOCALBIN ?= $(shell pwd)/bin
 $(LOCALBIN):
 	mkdir -p $(LOCALBIN)
+
+.PHONY:
+clean:
+	rm -R $(LOCALBIN)
 
 ## Tool Binaries
 KUSTOMIZE ?= $(LOCALBIN)/kustomize
