@@ -129,5 +129,3 @@ are significant differences to the [standard layout](https://github.com/golang-s
 
 The test suite needs the kubebuilder assets. If they are not installed in the default
 path make sure to set `KUBEBUILDER_ASSETS` before running tests.
-Similarly the vault CLI needs to be setup, if it is outside your `PATH` make sure to
-set `VAULT_ASSETS` to the directory containing the vault executable.

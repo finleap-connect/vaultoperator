@@ -30,7 +30,7 @@ spec:
         securityContext:
           {{- toYaml .Values.securityContext | nindent 12 }}
         args:
-        - --enable-leader-election
+        - --leader-elect
         command:
         - /manager
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"

@@ -36,15 +36,17 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 
-	vaultv1alpha1 "github.com/finleap-connect/vaultoperator/api/v1alpha1"
 	"github.com/finleap-connect/vaultoperator/util"
 	"github.com/finleap-connect/vaultoperator/vault"
 
 	b64 "encoding/base64"
+
+	vaultv1alpha1 "github.com/finleap-connect/vaultoperator/api/v1alpha1"
 )
 
 const (
-	finalizerName = "vault.finleap.cloud"
+	finalizerName  = "vault.finleap.cloud"
+	generator_uuid = "uuid"
 )
 
 // VaultSecretReconciler reconciles a VaultSecret object
@@ -204,7 +206,7 @@ func (r *VaultSecretReconciler) handleDeletion(ctx context.Context, log logr.Log
 			if err := r.deleteExternalResources(ctx, log, vaultSecret); err != nil {
 				log.Error(err, "external resources failed to clean up")
 				r.Recorder.Event(vaultSecret, corev1.EventTypeWarning, "Problem", "Failed cleanup up external resources")
-				// Failed, but continue exection for namespace deletion for example
+				// Failed, but continue execution for namespace deletion for example
 			}
 
 			// Remove our finalizer from the list and update it.
@@ -393,7 +395,7 @@ func (r *VaultSecretReconciler) getVaultSecretData(vaultSecret *vaultv1alpha1.Va
 }
 
 func (r *VaultSecretReconciler) generateValue(gen *vaultv1alpha1.VaultSecretGenerator) (v string, isBinary bool, e error) {
-	if gen.Name != "uuid" && len(gen.Args) < 1 {
+	if gen.Name != generator_uuid && len(gen.Args) < 1 {
 		e = ErrInvalidGeneratorArgs
 		return
 	}
@@ -418,7 +420,7 @@ func (r *VaultSecretReconciler) generateValue(gen *vaultv1alpha1.VaultSecretGene
 	case "bytes":
 		v = b64.StdEncoding.EncodeToString(util.RandBytes(int(gen.Args[0])))
 		isBinary = true
-	case "uuid":
+	case generator_uuid:
 		v = uuid.New().String()
 	case "rsa":
 		rsaBytes, err := util.GenerateRSA(gen.Args[0])
@@ -443,7 +445,7 @@ func (r *VaultSecretReconciler) generateValue(gen *vaultv1alpha1.VaultSecretGene
 }
 
 func (r *VaultSecretReconciler) checkPermission(vaultSecret *vaultv1alpha1.VaultSecret, vaultPath string) error {
-	// TODO: we should implement CRDs to controll permissions to vault secrets! SUPER IMPORTANT TO REMOVE THIS MADNESS!
+	// TODO: we should implement CRDs to control permissions to vault secrets! SUPER IMPORTANT TO REMOVE THIS MADNESS!
 	segments := strings.Split(vaultPath, "/")
 	if len(segments) < 1 {
 		return ErrInvalidVaultPath

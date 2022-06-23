@@ -1,7 +1,16 @@
-domain: github.com/finleap-connect/vaultoperator
-repo: https://github.com/finleap-connect/vaultoperator
+domain: vault.finleap.cloud
+layout:
+- go.kubebuilder.io/v3
+projectName: vaultoperator-new
+repo: github.com/finleap-connect/vaultoperator
 resources:
-- group: vault
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: vault.finleap.cloud
+  group: vault.finleap.cloud
   kind: VaultSecret
+  path: github.com/finleap-connect/vaultoperator/api/v1alpha1
   version: v1alpha1
-version: "2"
+version: "3"
