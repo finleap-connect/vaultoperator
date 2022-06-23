@@ -63,7 +63,7 @@ vet: ## Run go vet against code.
 lint: golangcilint ## Run linter against code.
 	$(GOLANGCILINT) run -v -E goconst -E misspell
 
-go-coverage: ## print coverage from coverprofiles
+coverage: ## print coverage from coverprofiles
 	go tool cover -func .coverprofile 
 
 .PHONY: test
