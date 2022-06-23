@@ -32,7 +32,7 @@ func (r *VaultSecret) SetupWebhookWithManager(mgr ctrl.Manager) error {
 		Complete()
 }
 
-// +kubebuilder:webhook:path=/validate-vault-finleap-cloud-v1alpha1-vaultsecret,mutating=false,failurePolicy=fail,groups=vault.finleap.cloud,resources=vaultsecrets,verbs=create;update,versions=v1alpha1,name=vvaultsecret.kb.io,sideEffects=None,admissionReviewVersions=v1alpha1
+// +kubebuilder:webhook:path=/validate-vault-finleap-cloud-v1alpha1-vaultsecret,mutating=false,failurePolicy=fail,groups=vault.finleap.cloud,resources=vaultsecrets,verbs=create;update,versions=v1alpha1,name=vvaultsecret.kb.io,sideEffects=None,admissionReviewVersions=v1;v1beta1
 
 var _ webhook.Validator = &VaultSecret{}
 
