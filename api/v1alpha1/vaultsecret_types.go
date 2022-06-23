@@ -65,7 +65,7 @@ type VaultSecretVariable struct {
 	Location *VaultSecretLocation `json:"location,omitempty"`
 }
 
-// Definition of a single data definiton
+// Definition of a single data definition
 type VaultSecretData struct {
 	// Associated key name for the created secret data.
 	// +kubebuilder:validation:MinLength=1

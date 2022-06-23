@@ -340,7 +340,7 @@ var _ = Describe("VaultSecretReconciler", func() {
 			Expect(s.Data["foo"]).To(Equal([]byte("nothing")))
 			Expect(s.Data["bar"]).To(Equal([]byte("nothingelse")))
 		})
-		Context("non-existant vault path and no generate", func() {
+		Context("non-existent vault path and no generate", func() {
 			vs := mustCreateNewVaultSecret(func(spec *vaultv1alpha1.VaultSecretSpec) {
 				spec.Data[0].Location.Path = "app/test/notexisting"
 			})
@@ -348,7 +348,7 @@ var _ = Describe("VaultSecretReconciler", func() {
 			_, err := testVSR.Reconcile(context.Background(), newRequestFor(vs))
 			Expect(err).To(MatchError(vault.ErrNotFound))
 		})
-		Context("existant vault path with generator update unnecessary", func() {
+		Context("existent vault path with generator update unnecessary", func() {
 			vs := mustCreateNewVaultSecret(func(spec *vaultv1alpha1.VaultSecretSpec) {
 				spec.Data[0].Generator = &vaultv1alpha1.VaultSecretGenerator{
 					Name: "string",
@@ -358,7 +358,7 @@ var _ = Describe("VaultSecretReconciler", func() {
 			mustReconcile(vs)
 			Expect(testVaultClient.Get("app/test/bar", "baz", 0)).To(Equal("fizzbuzz"))
 		})
-		Context("existant vault path with generator update necessary", func() {
+		Context("existent vault path with generator update necessary", func() {
 			vs := mustCreateNewVaultSecret(func(spec *vaultv1alpha1.VaultSecretSpec) {
 				spec.Data[0].Location.Field = "other"
 				spec.Data[0].Generator = &vaultv1alpha1.VaultSecretGenerator{
@@ -371,7 +371,7 @@ var _ = Describe("VaultSecretReconciler", func() {
 			Expect(testVaultClient.Get("app/test/bar", "baz", 1)).To(Equal("buzzfizz"))
 			Expect(testVaultClient.Get("app/test/bar", "other", 0)).To(HaveLen(32))
 		})
-		Context("non-existant vault path with generator", func() {
+		Context("non-existent vault path with generator", func() {
 			vs := mustCreateNewVaultSecret(func(spec *vaultv1alpha1.VaultSecretSpec) {
 				spec.Data[0].Location.Path = "app/test/generate"
 				spec.Data[0].Generator = &vaultv1alpha1.VaultSecretGenerator{

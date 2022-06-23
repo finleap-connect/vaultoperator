@@ -1,15 +1,3 @@
-/tools/*
-!/tools/kubebuilder-wrapper
-!/tools/kubebuilder-install
-!/tools/goget-wrapper
-!/tools/helm3-install
-!/tools/vault-install
-/bin
-/reports
-/tmp
-
-*.coverprofile
-
 # Binaries for programs and plugins
 *.exe
 *.exe~
@@ -17,6 +5,7 @@
 *.so
 *.dylib
 bin
+testbin/*
 
 # Test binary, build with `go test -c`
 *.test
@@ -34,4 +23,6 @@ bin
 *.swo
 *~
 
+cover.out
 .vscode
+.coverprofile
