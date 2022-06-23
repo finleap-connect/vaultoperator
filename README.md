@@ -27,12 +27,20 @@ Configure at least the following settings within your `values.yaml` :
 ```yaml
 # Configure Vault connection
 vault:
-  addr: "" # Address of the Vault instance
+  addr: "" # Required address of Vault
   tls:
-    secretName: "" # Specify secret containing CA to access Vault
+    secretName: "" # Required secret containing CA to access Vault
   credentials:
-    secretName: "" # Specify secret containing AppRole credentials as fields VAULT_ROLE_ID and VAULT_SECRET_ID, see https://www.vaultproject.io/docs/auth/approle
-  namespace: "" # Which Vault namespace to connect to
+    secretName: "" # Required secret containing AppRole credentials as fields VAULT_ROLE_ID and VAULT_SECRET_ID, see https://www.vaultproject.io/docs/auth/approle
+  namespace: "" # Optional Vault namespace to connect to
+
+# Set which secret engines are allowed to access namespaced
+allowedSecretEngines:
+  - app
+
+# Set which paths in Vault are allowed to be accessed from any namespace
+sharedPaths:
+  - shared
 ```
 
 Install VaultOperator with the following command:
