@@ -18,6 +18,8 @@ spec:
           name: '{{ include "vault-operator.fullname" . }}-webhook'
           namespace: '{{ .Release.Namespace }}'
           path: /convert
+      conversionReviewVersions:
+      - v1alpha1
   group: vault.finleap.cloud
   names:
     kind: VaultSecret
