@@ -67,7 +67,7 @@ go-coverage: ## print coverage from coverprofiles
 	go tool cover -func .coverprofile 
 
 .PHONY: test
-test: ginkgo manifests generate fmt vet envtest ## Run tests.
+test: ginkgo manifests generate fmt vet envtest vault ## Run tests.
 	KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use $(ENVTEST_K8S_VERSION) -p path)" $(GINKGO) -r -v -cover --failFast -requireSuite -covermode count -outputdir=. -coverprofile=.coverprofile
 
 ##@ Build
@@ -124,12 +124,16 @@ CONTROLLER_GEN ?= $(LOCALBIN)/controller-gen
 ENVTEST ?= $(LOCALBIN)/setup-envtest
 GINKGO ?= $(LOCALBIN)/ginkgo
 GOLANGCILINT ?= $(LOCALBIN)/golangci-lint
+VAULT ?= $(LOCALBIN)/vault
 
 ## Tool Versions
 KUSTOMIZE_VERSION ?= v4.5.5
 CONTROLLER_TOOLS_VERSION ?= v0.8.0
 GINKGO_VERSION ?= v1.16.5
 GOLANGCILINT_VERSION ?= v1.46.1
+VAULT_VERSION ?= 1.9.3
+GO_OS ?= $(shell go env GOOS)
+GO_ARCH ?= $(shell go env GOARCH)
 
 KUSTOMIZE_INSTALL_SCRIPT ?= "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"
 .PHONY: kustomize
@@ -153,8 +157,15 @@ $(GINKGO): $(LOCALBIN)
 	GOBIN=$(LOCALBIN) go install github.com/onsi/ginkgo/ginkgo@$(GINKGO_VERSION)
 
 .PHONY: golangcilint
-golangcilint: $(GOLANGCILINT) ## Download ginkgo locally if necessary.
+golangcilint: $(GOLANGCILINT) ## Download golangci-lint locally if necessary.
 $(GOLANGCILINT): $(LOCALBIN)
 	GOBIN=$(LOCALBIN) go install github.com/golangci/golangci-lint/cmd/golangci-lint@$(GOLANGCILINT_VERSION)
+
+.PHONY: vault
+vault: $(VAULT) ## Download vault locally if necessary.
+$(VAULT): $(LOCALBIN)
+	wget https://releases.hashicorp.com/vault/$(VAULT_VERSION)/vault_$(VAULT_VERSION)_$(GO_OS)_$(GO_ARCH).zip -O $(LOCALBIN)/vault.zip
+	unzip -o $(LOCALBIN)/vault.zip -d $(LOCALBIN)
+	rm $(LOCALBIN)/vault.zip
 
 include helm.mk
