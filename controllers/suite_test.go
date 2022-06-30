@@ -131,7 +131,6 @@ var _ = BeforeSuite(func() {
 	k8sClient, err = client.New(cfg, client.Options{Scheme: scheme.Scheme})
 	Expect(err).ToNot(HaveOccurred())
 	Expect(k8sClient).ToNot(BeNil())
-	Expect(err).ToNot(HaveOccurred())
 
 	err = k8sClient.Create(ctx, &v1.Namespace{
 		ObjectMeta: metav1.ObjectMeta{
