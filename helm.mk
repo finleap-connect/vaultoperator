@@ -7,6 +7,8 @@ HELM_REGISTRY               ?= https://finleap-connect.github.io/charts
 HELM_REGISTRY_ALIAS         ?= finleap-connect
 HELM_RELEASE                ?= vaop
 
+YQ ?= yq
+
 .PHONY: template-clean dependency-update install uninstall template docs
 
 ##@ Helm
@@ -37,7 +39,6 @@ helm-add-finleap: ## add finleap helm chart repo
 helm-set-version-all:
 	@find $(HELM_CHART_DIR) -name 'Chart.yaml' -exec $(YQ) e --inplace '.version = "$(VERSION)"' {} \;
 	@find $(HELM_CHART_DIR) -name 'Chart.yaml' -exec $(YQ) e --inplace '.appVersion = "$(VERSION)"' {} \;
-	@find $(HELM_CHART_DIR) -name 'Chart.yaml' -exec $(YQ) e --inplace '(.dependencies.[].version | select(. == "0.0.1-local")) |= "$(VERSION)"' {} \;
 
 helm-docs: ## update the auto generated docs of all helm charts
 	@docker run --rm --volume "$(PWD):/helm-docs" -u $(shell id -u) jnorwood/helm-docs:v1.4.0 --template-files=./README.md.gotmpl
