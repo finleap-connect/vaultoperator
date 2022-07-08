@@ -45,6 +45,9 @@ vault:
     secretName: "" # Required secret containing AppRole credentials as fields VAULT_ROLE_ID and VAULT_SECRET_ID, see https://www.vaultproject.io/docs/auth/approle
   namespace: "" # Optional Vault namespace to connect to
 
+#kubeconfig:
+#  secretName: "garden-kubeconfig-for-admin"
+
 # Set which secret engines are allowed to access namespaced
 allowedSecretEngines:
   - app
