@@ -3,6 +3,7 @@
 # Declare variables to be passed into your templates.
 
 deployCRDs: false
+deployRBACs: true
 
 replicaCount: 1
 
