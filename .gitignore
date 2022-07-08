@@ -26,3 +26,4 @@ testbin/*
 cover.out
 .vscode
 .coverprofile
+.dccache
