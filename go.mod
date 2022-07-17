@@ -14,7 +14,7 @@ require (
 	github.com/sethvargo/go-password v0.2.0
 	k8s.io/api v0.24.3
 	k8s.io/apimachinery v0.24.3
-	k8s.io/client-go v0.24.2
+	k8s.io/client-go v0.24.3
 	sigs.k8s.io/controller-runtime v0.12.3
 )
 
