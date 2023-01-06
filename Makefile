@@ -168,7 +168,7 @@ $(GOLANGCILINT): $(LOCALBIN)
 .PHONY: vault
 vault: $(VAULT) ## Download vault locally if necessary.
 $(VAULT): $(LOCALBIN)
-	wget https://releases.hashicorp.com/vault/$(VAULT_VERSION)/vault_$(VAULT_VERSION)_$(GO_OS)_$(GO_ARCH).zip -O $(LOCALBIN)/vault.zip
+	curl -o $(LOCALBIN)/vault.zip -L https://releases.hashicorp.com/vault/$(VAULT_VERSION)/vault_$(VAULT_VERSION)_$(GO_OS)_$(GO_ARCH).zip
 	unzip -o $(LOCALBIN)/vault.zip -d $(LOCALBIN)
 	rm $(LOCALBIN)/vault.zip
 

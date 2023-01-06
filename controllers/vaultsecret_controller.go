@@ -253,6 +253,16 @@ func (r *VaultSecretReconciler) updateSecret(secret *corev1.Secret, vaultSecret 
 		secret.Type = corev1.SecretTypeDockerConfigJson
 	}
 
+	// Update secret labels
+	if vaultSecret.Spec.SecretLabels != nil && len(vaultSecret.Spec.SecretLabels) > 0 {
+		if secret.ObjectMeta.Labels == nil {
+			secret.ObjectMeta.Labels = make(map[string]string)
+		}
+		for k, v := range vaultSecret.Spec.SecretLabels {
+			secret.ObjectMeta.Labels[k] = v
+		}
+	}
+
 	// Update secret data
 	if vaultSecret.Spec.Data != nil && len(vaultSecret.Spec.Data) > 0 {
 		for _, data := range vaultSecret.Spec.Data {
