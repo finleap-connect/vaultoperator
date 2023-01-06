@@ -88,6 +88,8 @@ metadata:
   namespace: mynamespace
 spec:
   secretName: name-of-generated-secret  # optional, default it is the same as the name of the VaultSecret
+  secretLabels: # optional, specify labels for the managed secret
+    foo: bar
   data: # optional if dataFrom is specified
   - name: something
     generator: # optional
