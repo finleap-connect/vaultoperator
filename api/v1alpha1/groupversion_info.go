@@ -13,8 +13,8 @@
 // limitations under the License.
 
 // Package v1alpha1 contains API Schema definitions for the vault.finleap.cloud v1alpha1 API group
-//+kubebuilder:object:generate=true
-//+groupName=vault.finleap.cloud
+// +kubebuilder:object:generate=true
+// +groupName=vault.finleap.cloud
 package v1alpha1
 
 import (

@@ -423,6 +423,28 @@ var _ = Describe("VaultSecretReconciler", func() {
 			Expect(s.Type).To(Equal(corev1.SecretTypeTLS))
 		})
 	})
+	It("can specify secret's labels", func() {
+		Context("new secret", func() {
+			vs := mustCreateNewVaultSecret(func(spec *vaultv1alpha1.VaultSecretSpec) {
+				spec.Data[0].Name = "secret-with-labels"
+				spec.Data = append(spec.Data, vaultv1alpha1.VaultSecretData{
+					Name: corev1.TLSPrivateKeyKey,
+					Location: &vaultv1alpha1.VaultSecretLocation{
+						Path:  "app/test/bar",
+						Field: "baz",
+					},
+				})
+				spec.SecretLabels = map[string]string{"frog": "prince"}
+			})
+			mustReconcile(vs)
+
+			s := &corev1.Secret{}
+			Eventually(func() bool {
+				return k8sClient.Get(ctx, namespacedName(vs), s) == nil
+			}, timeout, interval).Should(BeTrue())
+			Expect(s.ObjectMeta.Labels["frog"]).To(Equal("prince"))
+		})
+	})
 	It("can use templating", func() {
 		Context("with variables", func() {
 			vs := mustCreateNewVaultSecret(func(spec *vaultv1alpha1.VaultSecretSpec) {

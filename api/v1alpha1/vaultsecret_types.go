@@ -131,6 +131,9 @@ type VaultSecretSpec struct {
 	// Array of vault path references where to gather data from for the secret.
 	// +optional
 	DataFrom []VaultSecretDataRef `json:"dataFrom,omitempty"`
+	// Array of labels for the created secret.
+	// +optional
+	SecretLabels map[string]string `json:"secretLabels,omitempty"`
 }
 
 // VaultSecretStatus defines the observed state of VaultSecret
